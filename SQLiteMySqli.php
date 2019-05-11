@@ -178,8 +178,8 @@ class SQLiteMySqli {
 	 * @throws InvalidArgumentException if $name does not meet all the specification
 	 */
 	public function setTransactionName(String $transationName): self {
-		if (! is_string( $transationName ) || strlen( $transationName ) === 0) $transationName = null;
-		$this->checkNameOrThrowError( $transationName, "databaseName" );
+		if (strlen( $transationName ) === 0) $transationName = null;
+		else $this->checkNameOrThrowError( $transationName, "databaseName" );
 
 		// TODO: Security: Poeple can execute commands directly to the database after the begin and end of a transactions
 		// To start transaction "BEGIN [$name]" and "COMMIT [$name]"... same with ROLLBACK too!
@@ -648,17 +648,17 @@ class SQLiteMySqli {
 	}
 
 	protected function beginTransactionSQLite(): bool {
-		if (! is_string( $this->transactionName )) return false;
+		if ($this->transactionName === null || strlen( $this->transactionName ) === 0) return false;
 		return $this->getSQLite()->exec( "SAVEPOINT " . $this->transactionName );
 	}
 
 	protected function commitTransactionSQLite(): bool {
-		if (! is_string( $this->transactionName )) return false;
+		if ($this->transactionName === null || strlen( $this->transactionName ) === 0) return false;
 		return $this->getSQLite()->exec( "RELEASE " . $this->transactionName );
 	}
 
 	protected function rollbackTransactionSQLite(): bool {
-		if (! is_string( $this->transactionName )) return false;
+		if ($this->transactionName === null || strlen( $this->transactionName ) === 0) return false;
 		return $this->getSQLite()->exec( "ROLLBACK TO " . $this->transactionName );
 	}
 
